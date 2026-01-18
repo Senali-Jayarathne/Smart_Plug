@@ -2,10 +2,7 @@ import network
 import socket
 from machine import Pin
 import time
-
-# WiFi credentials
-SSID = "Dialog 4G 563"
-PASSWORD = "be6F0F9F"
+from secrets import SSID, PASSWORD
 
 # Onboard LED
 led = Pin("LED", Pin.OUT)
