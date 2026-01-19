@@ -20,59 +20,100 @@ while not wlan.isconnected():
 print("\nConnected!")
 print("IP:", wlan.ifconfig()[0])
 
-# HTML page
+# Animated HTML
 def webpage(state):
     return f"""
     <html>
     <head>
       <meta name="viewport" content="width=device-width, initial-scale=1">
       <style>
+        @keyframes bgMove {{
+          0% {{ background-position: 0% 50%; }}
+          50% {{ background-position: 100% 50%; }}
+          100% {{ background-position: 0% 50%; }}
+        }}
+
         body {{
           font-family: Arial, sans-serif;
           text-align: center;
-          background: linear-gradient(135deg, #1e3c72, #2a5298);
+          background: linear-gradient(45deg, #ff6b6b, #feca57, #48dbfb, #5f27cd, #1dd1a1);
+          background-size: 400% 400%;
+          animation: bgMove 10s infinite ease;
           color: white;
           padding: 20px;
         }}
+
         h2 {{
           margin-top: 30px;
-          font-size: 28px;
+          font-size: 32px;
           font-weight: bold;
+          animation: floatTitle 3s infinite ease-in-out;
         }}
+
+        @keyframes floatTitle {{
+          0%   {{ transform: translateY(0px);   }}
+          50%  {{ transform: translateY(-12px); }}
+          100% {{ transform: translateY(0px);   }}
+        }}
+
         .status {{
-          font-size: 22px;
+          font-size: 26px;
           margin-bottom: 25px;
+          animation: glow 1.6s infinite;
         }}
+
+        @keyframes glow {{
+          0% {{ text-shadow: 0 0 4px #fff; opacity: 0.7; }}
+          50% {{ text-shadow: 0 0 18px #fff; opacity: 1; }}
+          100% {{ text-shadow: 0 0 4px #fff; opacity: 0.7; }}
+        }}
+
         button {{
-          background: white;
-          color: #2a5298;
+          background: rgba(255,255,255,0.9);
+          color: #222;
           border: none;
-          padding: 16px 28px;
-          margin: 10px;
-          font-size: 20px;
-          border-radius: 12px;
-          box-shadow: 0 4px 10px rgba(0,0,0,0.3);
+          padding: 18px 30px;
+          margin: 12px;
+          font-size: 22px;
+          font-weight: bold;
+          border-radius: 18px;
+          box-shadow: 0 0 12px rgba(255,255,255,0.7);
           width: 80%;
-          max-width: 220px;
+          max-width: 260px;
           cursor: pointer;
-          transition: 0.2s;
+          transition: transform 0.25s, box-shadow 0.25s;
         }}
+
         button:hover {{
-          transform: scale(1.05);
+          transform: scale(1.12);
+          box-shadow: 0 0 20px rgba(255,255,255,0.9);
         }}
+
+        button:active {{
+          transform: scale(0.95);
+        }}
+
+        a {{ text-decoration: none; }}
+
         .footer {{
-          margin-top: 30px;
-          font-size: 14px;
-          opacity: 0.8;
+          margin-top: 40px;
+          font-size: 15px;
+          opacity: 0;
+          animation: fadeFoot 4s forwards;
+        }}
+
+        @keyframes fadeFoot {{
+          from {{ opacity: 0; }}
+          to {{ opacity: 0.85; }}
         }}
       </style>
     </head>
     <body>
-      <h2>Pico W LED Control</h2>
+      <h2>✨ Pico W Magic LED ✨</h2>
       <p class="status">LED is <strong>{state}</strong></p>
-      <a href="/on"><button>Turn ON</button></a><br>
-      <a href="/off"><button>Turn OFF</button></a>
-      <p class="footer">Made with ❤️ on MicroPython</p>
+      <a href="/on"><button>🌈 Turn ON</button></a><br>
+      <a href="/off"><button>🌙 Turn OFF</button></a>
+      <p class="footer">Made with ❤️ + ✨ MicroPython ✨</p>
     </body>
     </html>
     """
@@ -80,6 +121,7 @@ def webpage(state):
 # Web server
 addr = socket.getaddrinfo('0.0.0.0', 80)[0][-1]
 s = socket.socket()
+s.setsockopt(socket.SOL_SOCKET, socket.SO_REUSEADDR, 1)
 s.bind(addr)
 s.listen(1)
 
@@ -101,3 +143,4 @@ while True:
     client.send("HTTP/1.0 200 OK\r\nContent-type: text/html\r\n\r\n")
     client.send(response)
     client.close()
+
